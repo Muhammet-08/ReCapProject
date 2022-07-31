@@ -1,5 +1,7 @@
-﻿using DataAccess.Abstract;
+﻿using Core.DataAccess.EntityFramework;
+using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,55 +11,20 @@ using System.Text;
 
 namespace DataAccess.Concrete.EntityFramework
 {
-    public class EfCarDal : ICarDal
+    public class EfCarDal : EfEntityRepositoryBase<Car, ReCapProjectContext>, ICarDal
     {
-        public void Add(Car entity)
+        public List<CarDetailDto> GetCarDetails()
         {
             using (ReCapProjectContext context=new ReCapProjectContext())
             {
-                var addedEntity = context.Entry(entity);//yukarıda verilen referansı yakala
-                addedEntity.State = EntityState.Added;//onu ekle 
-                context.SaveChanges();//yukarıdaki işlemleri tut 
-            }
-        }
-
-        public void Delete(Car entity)
-        {
-            using (ReCapProjectContext context = new ReCapProjectContext())
-            {
-                var deletedEntity = context.Entry(entity);//yukarıda verilen referansı yakala
-                deletedEntity.State = EntityState.Deleted;//onu ekle 
-                context.SaveChanges();//yukarıdaki işlemleri tut 
-            }
-        }
-
-        public Car Get(Expression<Func<Car, bool>> filter)
-        {
-            using (ReCapProjectContext context=new ReCapProjectContext())
-            {
-                return context.Set<Car>().SingleOrDefault(filter);//buradaki filtre yazacağımız lambda komutu
-
-            }
-        }
-
-        public List<Car> GetAll(Expression<Func<Car, bool>> filter = null)
-        {
-            using (ReCapProjectContext context=new ReCapProjectContext())
-            {
-                return filter == null
-                    ? context.Set<Car>().ToList() //car tablosunu döndür bana select*from products  (filtre var ise)
-                    : context.Set<Car>().Where(filter).ToList(); //filtre varsa bu filtreleyip yolla demek
-                    
-            }
-        }
-
-        public void Update(Car entity)
-        {
-            using (ReCapProjectContext context = new ReCapProjectContext())
-            {
-                var updatedEntity = context.Entry(entity);//yukarıda verilen referansı yakala
-                updatedEntity.State = EntityState.Modified;//onu ekle 
-                context.SaveChanges();//yukarıdaki işlemleri tut 
+                var result = from c in context.Cars
+                             join b in context.Brands
+                             on c.BrandId equals b.BrandId
+                             join cc in context.Colors
+                             on c.ColorId equals cc.ColorId
+                             select new CarDetailDto {BrandName=b.BrandName,CarName=c.CarName,
+                                 ColorName=cc.ColorName,DailyPrice=c.DailyPrice };
+                return result.ToList();
             }
         }
     }
