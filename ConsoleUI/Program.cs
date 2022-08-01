@@ -1,6 +1,7 @@
 ﻿using Business.Concrete;
 using DataAccess.Concrete.EntityFramework;
 using DataAccess.Concrete.InMemory_sahte_veritabanı_;
+using Entities;
 using Entities.Concrete;
 using System;
 
@@ -13,11 +14,44 @@ namespace ConsoleUI
             //CarIdInsert();
             //ColorIdInsert();
             //BrandIdInsert();
-            CarManager carManager = new CarManager(new EfCarDal());
-            carManager.Delete(new Car {CarId= 10});
-            foreach (var car in carManager.GetCarDetails().Data)
+            //UserDeleted();
+            //CustomerEvent();
+            //RentalEvent();
+
+        }
+
+        private static void RentalEvent()
+        {
+            RentalManager rentalManager = new RentalManager(new EfRentalDal());
+            foreach (var rental in rentalManager.GetDetailRental().Data)
             {
-                Console.WriteLine(car.CarName+"/"+car.Description);
+                Console.WriteLine("Kiralanan Araç: " + rental.CarName);
+            }
+        }
+
+        private static void CustomerEvent()
+        {
+            CustomerManager customerManager = new CustomerManager(new EfCustomerDal());
+            customerManager.Update(new Customer { CustomerId = 5, UserId = 5, CompanyName = "Trendyol" });
+
+            foreach (var customer in customerManager.GetAll().Data)
+            {
+                Console.WriteLine(customer.CompanyName);
+            }
+        }
+
+        private static void UserDeleted()
+        {
+            UserManager userManager = new UserManager(new EfUserDal());
+            userManager.Delete(new User { UserId = 6 });
+            userManager.Delete(new User { UserId = 7 });
+            userManager.Delete(new User { UserId = 8 });
+            userManager.Delete(new User { UserId = 9 });
+            userManager.Delete(new User { UserId = 10 });
+
+            foreach (var user in userManager.GetAll().Data)
+            {
+                Console.WriteLine("Kullanıcı Adı Soyadı:{0} {1} {2}", user.FirstName, user.LastName, user.UserId);
             }
         }
 
