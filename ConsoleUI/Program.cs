@@ -14,9 +14,10 @@ namespace ConsoleUI
             //ColorIdInsert();
             //BrandIdInsert();
             CarManager carManager = new CarManager(new EfCarDal());
-            foreach (var car in carManager.GetCarDetails())
+            carManager.Delete(new Car {CarId= 10});
+            foreach (var car in carManager.GetCarDetails().Data)
             {
-                Console.WriteLine(car.CarName+"/"+car.BrandName);
+                Console.WriteLine(car.CarName+"/"+car.Description);
             }
         }
 
@@ -24,7 +25,7 @@ namespace ConsoleUI
         {
             BrandManager brandManager = new BrandManager(new EfBrandDal());
 
-            foreach (var brand in brandManager.GetById(2))
+            foreach (var brand in brandManager.GetById(2).Data)
             {
                 Console.WriteLine(brand.BrandName);
             }
@@ -33,7 +34,7 @@ namespace ConsoleUI
         private static void ColorIdInsert()
         {
             ColorManager colorManager = new ColorManager(new EfColorDal());
-            foreach (var color in colorManager.GetById(5))
+            foreach (var color in colorManager.GetById(5).Data)
             {
                 Console.WriteLine(color.ColorName);
             }
@@ -45,7 +46,7 @@ namespace ConsoleUI
             CarManager carManager = new CarManager(new EfCarDal());
             carManager.Add(new Car { BrandId = 3, DailyPrice = 0, CarName = "Mercedes araba" });
 
-            foreach (var car in carManager.GetById(1))
+            foreach (var car in carManager.GetById(1).Data)
             {
                 Console.WriteLine(car.Description);
             }
